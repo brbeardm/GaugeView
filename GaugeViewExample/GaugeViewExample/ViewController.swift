@@ -21,14 +21,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
        
         self.gaugeView?.stops = [
-            (0.0, UIColor.greenColor()),
-            (0.25, UIColor.yellowColor()),
-            (0.5, UIColor.orangeColor()),
-            (0.75, UIColor.redColor())
+            (0.0, UIColor.green),
+            (0.25, UIColor.yellow),
+            (0.5, UIColor.orange),
+            (0.75, UIColor.red)
         ]
         self.setProgress(Double(self.slider!.value))
     }
@@ -38,21 +38,21 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func setProgress(progress: Double) {
+    func setProgress(_ progress: Double) {
         self.gaugeView?.progress = progress
         self.label?.text = String(format: "%.2f", self.gaugeView!.progress)
         self.slider?.setValue(Float(self.gaugeView!.progress), animated: false)
     }
 
-    @IBAction func sliderValueDidChange(sender: UISlider) {
+    @IBAction func sliderValueDidChange(_ sender: UISlider) {
         self.setProgress(Double(sender.value))
     }
     
-    @IBAction func decrementValue(sender: UIButton) {
+    @IBAction func decrementValue(_ sender: UIButton) {
         self.setProgress(self.gaugeView!.progress - 0.1)
     }
     
-    @IBAction func incrementValue(sender: UIButton) {
+    @IBAction func incrementValue(_ sender: UIButton) {
         self.setProgress(self.gaugeView!.progress + 0.1)
     }
 }
