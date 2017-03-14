@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "MPGaugeView"
-  s.version      = "0.1"
+  s.version      = "0.2"
   s.summary      = "A half circle gauge view."
   s.homepage     = "https://github.com/MPiccinato/GaugeView"
   s.license      = "MIT"
