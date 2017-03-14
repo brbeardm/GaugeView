@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios
   s.platform     = :ios, "8.0"
 
-  s.source       = { :git => "https://github.com/MPiccinato/GaugeView.git", :tag => "0.1" }
+  s.source       = { :git => "https://github.com/MPiccinato/GaugeView.git", :tag => s.version }
   s.source_files  = "GaugeView/**/*.swift"
 
 end
