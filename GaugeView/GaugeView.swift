@@ -13,19 +13,19 @@ import Darwin
 @IBDesignable class GaugeView: UIView {
    
     // Style
-    var stops: Array<(stop: Double, color: UIColor)> = [ (0.0, UIColor.greenColor()) ] {
+    var stops: Array<(stop: Double, color: UIColor)> = [ (0.0, UIColor.green) ] {
         didSet {
             self.fillLayer.stops = self.stops
         }
     }
-    var borderColor: UIColor = UIColor.grayColor()
+    var borderColor: UIColor = UIColor.gray
     var width: CGFloat = 30.0
     
     var animateUpdates: Bool = true
    
     // Data
-    private var _progress: Double = 0.0
-    private var _previousProgress: Double = 0.0
+    fileprivate var _progress: Double = 0.0
+    fileprivate var _previousProgress: Double = 0.0
     var progress: Double {
         get {
             return _progress
@@ -45,8 +45,8 @@ import Darwin
     }
    
     // Layers
-    private let fillLayer: GaugeLayer = GaugeLayer()
-    private let borderLayer: CAShapeLayer = CAShapeLayer()
+    fileprivate let fillLayer: GaugeLayer = GaugeLayer()
+    fileprivate let borderLayer: CAShapeLayer = CAShapeLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -61,7 +61,7 @@ import Darwin
     }
     
     func commonInit() {
-        self.backgroundColor = UIColor.whiteColor()
+        self.backgroundColor = UIColor.white
         
         self.initBorderLayer()
         self.initFillLayer()
@@ -79,11 +79,11 @@ import Darwin
     
     // Parts
     func getArcCenter() -> CGPoint {
-        return CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds))
+        return CGPoint(x: self.bounds.midX, y: self.bounds.maxY)
     }
     
     func getRadius() -> CGFloat {
-        return CGRectGetMidX(self.bounds)
+        return self.bounds.midX
     }
     
     func initFillLayer() {
@@ -98,18 +98,18 @@ import Darwin
         let radius = self.getRadius()
         
         let borderPath = UIBezierPath()
-        borderPath.moveToPoint(CGPointMake(0, self.bounds.size.height))
-        borderPath.addArcWithCenter(arcCenter, radius: radius, startAngle: CGFloat(M_PI), endAngle: CGFloat(-2.0 * M_PI), clockwise: true)
-        borderPath.addLineToPoint(CGPointMake(self.bounds.size.width - self.width, self.bounds.size.height))
-        borderPath.addArcWithCenter(arcCenter, radius: radius - self.width, startAngle: CGFloat(-2.0 * M_PI), endAngle: CGFloat(M_PI), clockwise: false)
-        borderPath.addLineToPoint(CGPointMake(0, self.bounds.size.height))
+        borderPath.move(to: CGPoint(x: 0, y: self.bounds.size.height))
+        borderPath.addArc(withCenter: arcCenter, radius: radius, startAngle: CGFloat(M_PI), endAngle: CGFloat(-2.0 * M_PI), clockwise: true)
+        borderPath.addLine(to: CGPoint(x: self.bounds.size.width - self.width, y: self.bounds.size.height))
+        borderPath.addArc(withCenter: arcCenter, radius: radius - self.width, startAngle: CGFloat(-2.0 * M_PI), endAngle: CGFloat(M_PI), clockwise: false)
+        borderPath.addLine(to: CGPoint(x: 0, y: self.bounds.size.height))
         
-        self.borderLayer.path = borderPath.CGPath
+        self.borderLayer.path = borderPath.cgPath
         self.borderLayer.position = CGPoint(x: 0, y: 0)
         
         self.borderLayer.lineWidth = 1
-        self.borderLayer.fillColor = UIColor.clearColor().CGColor
-        self.borderLayer.strokeColor = self.borderColor.CGColor
+        self.borderLayer.fillColor = UIColor.clear.cgColor
+        self.borderLayer.strokeColor = self.borderColor.cgColor
         self.borderLayer.fillRule = kCAFillRuleEvenOdd
     }
     
@@ -125,18 +125,18 @@ import Darwin
         animation.toValue = self.progress
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         animation.fillMode = kCAFillModeForwards
-        animation.removedOnCompletion = true
-        self.fillLayer.addAnimation(animation, forKey: "progress")
+        animation.isRemovedOnCompletion = true
+        self.fillLayer.add(animation, forKey: "progress")
     }
 }
 
 class GaugeLayer: CALayer {
     
     var progress: Double = 0.0
-    var stops: Array<(stop: Double, color: UIColor)> = [ (0.0, UIColor.greenColor()) ]
+    var stops: Array<(stop: Double, color: UIColor)> = [ (0.0, UIColor.green) ]
     var width: Double = 10.0
     
-    private var color: UIColor {
+    fileprivate var color: UIColor {
         get {
             if self.stops.count == 1 {
                 return stops.first!.color
@@ -157,7 +157,7 @@ class GaugeLayer: CALayer {
     override init() {
         super.init()
 
-        self.contentsScale = UIScreen.mainScreen().scale
+        self.contentsScale = UIScreen.main.scale
         self.setNeedsDisplay()
     }
 
@@ -165,7 +165,7 @@ class GaugeLayer: CALayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init(layer: AnyObject) {
+    override init(layer: Any) {
         super.init(layer: layer)
         
         if let other = layer as? GaugeLayer {
@@ -174,32 +174,32 @@ class GaugeLayer: CALayer {
         }
     }
     
-    override class func needsDisplayForKey(key: String) -> Bool {
+    override class func needsDisplay(forKey key: String) -> Bool {
         if key == "progress" {
             return true
         }
-        return super.needsDisplayForKey(key)
+        return super.needsDisplay(forKey: key)
     }
     
-    override func drawInContext(ctx: CGContext) {
-        let center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds))
-        let radius = CGRectGetMidX(self.bounds)
+    override func draw(in ctx: CGContext) {
+        let center = CGPoint(x: self.bounds.midX, y: self.bounds.maxY)
+        let radius = self.bounds.midX
         
         let endAngle = CGFloat((M_PI - (M_PI * self.progress)) * -1)
         
         let path = UIBezierPath(arcCenter: center, radius: radius, startAngle: CGFloat(M_PI), endAngle: endAngle, clockwise: true)
-        path.addLineToPoint(center)
+        path.addLine(to: center)
         
         let innerPath = UIBezierPath(arcCenter: center, radius: radius - CGFloat(self.width), startAngle: CGFloat(M_PI), endAngle: endAngle, clockwise: true)
-        innerPath.addLineToPoint(center)
+        innerPath.addLine(to: center)
         
-        path.appendPath(innerPath)
+        path.append(innerPath)
         path.usesEvenOddFillRule = true
        
-        CGContextAddPath(ctx, path.CGPath)
+        ctx.addPath(path.cgPath)
        
-        CGContextSetFillColorWithColor(ctx, self.color.CGColor)
-        CGContextEOFillPath(ctx)
+        ctx.setFillColor(self.color.cgColor)
+        ctx.fillPath(using: .evenOdd)
     }
     
 }
